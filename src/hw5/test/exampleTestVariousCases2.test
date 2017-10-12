@@ -1,0 +1,22 @@
+# generic version-Jun Wang 5:00
+# Sample testing case2-two edges.
+# Tests that a graph can be created, a pair of nodes and
+# an edge between them can be added, and a pair of nodes
+# and a single edge can be printed out.
+
+
+# Create a graph
+CreateGraph graph1
+
+# Add a pair of nodes
+AddNode graph1 n1
+AddNode graph1 n2
+
+# Add edges
+AddEdge graph1 n1 n2 e1
+AddEdge graph1 n2 n1 e2
+
+# Print the nodes in the graph and the outgoing edges from n1, n2
+ListNodes graph1
+ListChildren graph1 n1
+ListChildren graph1 n2

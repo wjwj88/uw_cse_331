@@ -1,0 +1,7 @@
+# this is to test echoing empty lines and 
+# lines starting with #.
+
+# works well
+
+# terminate program
+q

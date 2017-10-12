@@ -1,0 +1,8 @@
+# Tests building a graph with only one node and no edges hw7
+
+# Load oneNodeGraph.tsv
+loaded graph oneNodeGraph  
+
+# Print nodes in the graph and edges from the node
+oneNodeGraph contains: Amanda
+the children of Amanda in oneNodeGraph are:

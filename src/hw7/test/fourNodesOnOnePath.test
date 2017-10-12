@@ -1,0 +1,12 @@
+# Find a path with Dijkstra's algorithm when there is only one possible path with 4 nodes hw7
+
+CreateGraph g
+AddNode g A
+AddNode g B
+AddNode g C
+AddNode g D
+AddEdge g A	B 0.5	
+AddEdge g B D 0.8 
+AddEdge g D C 1.0
+
+FindPath g A C

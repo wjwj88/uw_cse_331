@@ -1,0 +1,7 @@
+# Tests building an empty graph hw7
+
+# Load emptyGraph.tsv
+loaded graph empty 
+
+# Print nodes in the graph 
+empty contains:

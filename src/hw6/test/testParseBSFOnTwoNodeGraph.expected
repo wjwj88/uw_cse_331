@@ -1,0 +1,16 @@
+# test parser and BSF two nodes graph  generic version-Jun Wang 5:00
+
+# build graph
+loaded graph twoNodeGraph
+
+# check graph is built correctly
+twoNodeGraph contains: Amanda Jack
+the children of Amanda in twoNodeGraph are: Jack(Seattle)
+the children of Jack in twoNodeGraph are: Amanda(Seattle)
+
+# check BFS
+path from Amanda to Amanda: 
+path from Amanda to Jack: 
+Amanda to Jack via Seattle
+path from Jack to Amanda: 
+Jack to Amanda via Seattle

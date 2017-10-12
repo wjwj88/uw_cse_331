@@ -1,0 +1,8 @@
+# Find a path with Dijkstra's algorithm on student.tsv hw7
+
+# Load student.tsv
+LoadGraph student student.tsv
+
+# find path between 
+FindPath student Tom Bill
+FindPath student Tom Mike

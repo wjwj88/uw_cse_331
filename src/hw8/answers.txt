@@ -1,0 +1,18 @@
+CSE 331 Homework 8.  Answers to Written questions.
+Edit this file to supply your answers.
+
+Name:  <Jun Wang>
+
+Describe which parts of your code belong to the model, the view,
+the controller, or none of these.  (See the assignment for details.)
+
+model: NodeCoordinate.java, CampusParser.java, CampusPathFinderModel.java
+
+The campusViewController.java is a combination of view and controller.
+The methods can be listed as below:
+printBuildings(), printMenu(), printRoute() methods are view because they are 
+used to show information to the user
+The main method in this class is mainly a controller since it takes
+the input from the user. However, it has some view inside because 
+when the user wants to print some appropriate information, it will 
+call print methods mentioned above which are view.

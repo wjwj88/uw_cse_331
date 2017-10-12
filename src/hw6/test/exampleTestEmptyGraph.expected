@@ -1,0 +1,8 @@
+# Test the parser and BFS on empty file  generic version-Jun Wang 5:00
+
+loaded graph empty
+
+empty contains:
+
+unknown character node A1
+unknown character node B1

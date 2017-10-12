@@ -1,0 +1,15 @@
+# test parser and BSF on student graph  generic version-Jun Wang 5:00
+
+# build graph
+LoadGraph student student.tsv
+
+# check graph is built correctly
+ListNodes student 
+ListChildren student Amanda
+ListChildren student Jack
+ListChildren student Bill
+
+# check BFS
+FindPath student Amanda Amanda
+FindPath student Tom Mike
+FindPath student Amanda Jack

@@ -1,0 +1,6 @@
+# Load the Marvel dataset and search for an existing path. hw7
+# Find one path between two nodes
+
+LoadGraph marvel marvel.tsv
+
+FindPath marvel OLD_SKULL HAWK

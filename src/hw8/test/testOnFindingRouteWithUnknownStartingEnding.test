@@ -1,0 +1,8 @@
+# this is to test the program recognize Unknown building
+# whenever the starting and ending building is unknown.
+r
+ABC
+CPU
+
+# terminate the program
+q

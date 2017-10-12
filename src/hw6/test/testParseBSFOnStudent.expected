@@ -1,0 +1,18 @@
+# test parser and BSF on student graph  generic version-Jun Wang 5:00
+
+# build graph
+loaded graph student 
+
+# check graph is built correctly
+student contains: Amanda Bill Jack Jun Mike Tom
+the children of Amanda in student are: 
+the children of Jack in student are: Bill(US) Tom(US)
+the children of Bill in student are: Jack(US) Jun(China) Mike(China) Tom(US)
+
+# check BFS
+path from Amanda to Amanda:
+path from Tom to Mike: 
+Tom to Bill via US
+Bill to Mike via China  
+path from Amanda to Jack: 
+no path found  

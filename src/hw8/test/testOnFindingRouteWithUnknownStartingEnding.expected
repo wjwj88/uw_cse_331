@@ -1,0 +1,12 @@
+Menu:
+r to find a route
+b to see a list of all buildings
+q to quit
+
+Enter an option ('m' to see the menu): # this is to test the program recognize Unknown building
+# whenever the starting and ending building is unknown.
+Abbreviated name of starting building: Abbreviated name of ending building: Unknown building: ABC
+Unknown building: CPU
+
+Enter an option ('m' to see the menu):
+# terminate the program

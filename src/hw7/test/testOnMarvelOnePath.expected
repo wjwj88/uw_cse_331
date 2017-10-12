@@ -1,0 +1,8 @@
+# Load the Marvel dataset and search for an existing path. hw7
+# Find one path between two nodes
+
+loaded graph marvel
+
+path from OLD SKULL to HAWK:
+OLD SKULL to HAWK with weight 0.077
+total cost: 0.077

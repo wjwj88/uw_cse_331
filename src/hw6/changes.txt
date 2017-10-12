@@ -1,0 +1,24 @@
+CSE 331 Homework 6.  Answers to Written questions. // new version-Jun Wang 4:10
+Edit this file to supply your answers.
+
+Name:  <Jun Wang>
+
+Briefly describe any changes made to your Graph ADT from HW5 and why 
+those changes were made below.  (See the HW6 assignment for details.)
+
+1. I created a new class EdgesOfNode.java for HW 5, which is an object to store an edge with its destination,
+   because I initially uses HashMap<destination, edge> which turned out to be very time consuming.
+2. I changed the data structure for storing the node and destination associated with edges from 
+   HashMap<String, ArrayList<HashMap<String, String>>> to HashMap<String, Set<EdgesOfNode>> because 
+   it turned out that Set is more efficient and faster than ArrayList in terms of storing the nodes 
+   and the associated edges. Otherwise, the time required to create the graph will be much more than 
+   30s.
+3. Due to the above 2 changes, I also wrote a test file to test EdgesOfNode.java.
+4. Since the data structure of the DiGraph was changed, I made some small changes in the methods
+   in DiGraph.java class to match Set instead of ArrayList. I also deleted some methods which are not
+   necessary for hw5 and hw6.
+5. For hw5, I need to use the comparator defined in hw6 class and I already import hw6 in hw5 files.
+6. The main method in the PathFinder.java in hw6 is already tested by myself but no tests file were written
+   due to the System.out.println(). It can be tested by running it through attu command line if necessary.
+7. The new hw5 graph class and hw6 PathFinder class had passed all tests, including hw5 tests and hw6 tests.
+   

@@ -1,0 +1,10 @@
+# Find a path with Dijkstra's algorithm when there are two possible paths hw7
+
+CreateGraph characters
+AddNode characters GORILLA-MAN
+AddNode characters HAWK
+AddEdge characters GORILLA-MAN HAWK 1
+AddEdge characters GORILLA-MAN HAWK 0.999
+
+FindPath characters GORILLA-MAN GORILLA-MAN
+FindPath characters HAWK HAWK

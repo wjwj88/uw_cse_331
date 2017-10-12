@@ -1,0 +1,13 @@
+# test parser on one node graph  generic version-Jun Wang 5:00
+
+# build graph
+LoadGraph oneNodeGraph oneNodeGraph.tsv
+
+# check graph is built correctly
+ListNodes oneNodeGraph
+ListChildren oneNodeGraph Amanda
+ListChildren oneNodeGraph Jack
+
+# check BFS
+FindPath oneNodeGraph Amanda Amanda
+FindPath oneNodeGraph Amanda Jack

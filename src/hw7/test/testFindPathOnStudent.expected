@@ -1,0 +1,13 @@
+# Find a path with Dijkstra's algorithm on student.tsv hw7
+
+# Load student.tsv
+loaded graph student
+
+# find path between 
+path from Tom to Bill:
+Tom to Bill with weight 1.000
+total cost: 1.000
+path from Tom to Mike:
+Tom to Bill with weight 1.000
+Bill to Mike with weight 1.000
+total cost: 2.000

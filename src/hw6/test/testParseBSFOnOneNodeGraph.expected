@@ -1,0 +1,13 @@
+# test parser on one node graph  generic version-Jun Wang 5:00
+
+# build graph
+loaded graph oneNodeGraph
+
+# check graph is built correctly
+oneNodeGraph contains: Amanda
+the children of Amanda in oneNodeGraph are:
+the children of Jack in oneNodeGraph are: the node Jack is not in this graph
+
+# check BFS
+path from Amanda to Amanda: 
+unknown character Jack

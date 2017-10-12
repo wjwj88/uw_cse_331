@@ -1,0 +1,8 @@
+# Tests building a graph with only one node and no edges hw7
+
+# Load oneNodeGraph.tsv
+LoadGraph oneNodeGraph oneNodeGraph.tsv
+
+# Print nodes in the graph and edges from the node
+ListNodes oneNodeGraph
+ListChildren oneNodeGraph Amanda

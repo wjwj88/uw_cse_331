@@ -1,0 +1,40 @@
+CSE 331 Homework 3.  Answers to Written questions.
+Edit this file to supply your answers.
+
+Name:  <Jun Wang>
+
+
+Problem 6.
+
+(a)
+since the first index is 0, thus it will throw exceptions if n is less than 0.Thus 0 is not included.
+
+(b)
+the base case is n=0 and n=1. n=2 should not be included.
+
+(c)
+The next Fibonacci is adding the previous 2 Fibonacci numbers, not subtracting. 
+
+Problem 7. 
+a.
+1. when the ball object is declared, we should use this.volume=volume instead.
+2. getVolume method should return volume, but not 0, otherwise it will always return 0.
+
+b. Keeping track of the total volume of the balls and whenever balls are added and removed is much better 
+   than just looping all the balls in the ballContainer and adding up the volumes every time because looping every time 
+   is like a recursion since all previous balls has to be added again and again. Keeping track of the volume is also 
+   faster because it just needs a very simple operation while simply looping the balls take much more time because it 
+   loops every ball in the box. 
+  
+c. I add one more field for Box class because otherwise the variable maxVolume for the box cannot be declared.
+
+   I can think of 2 different ways to implement the getBallsFromSmallest(): the first one id to create a BallComparator 
+   class and let Box class implements it and then the balls can be sorted based on the compare method from 
+   BallComparator class. The second one is not to use any comparator, but to go through all the balls in the box and sort them 
+   based on their volumes.
+   
+   I personally think the first one is better than the second one because the first one just use a comparator interface and 
+   it's easily to be implemented.And comparator is a common way to sort objects. The reason why I used the second way is that 
+   I kept getting the error"the type BallComparator cannot be a superinterface of Ball and a superinterface must be a interface" and 
+   I already tried different ways to fix it, but failed. The second way is not so good because it uses loops to go through every ball
+   in the box every time when there are any changes and it would take much more time. 

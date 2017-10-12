@@ -1,0 +1,34 @@
+Menu:
+	r to find a route
+	b to see a list of all buildings
+	q to quit
+
+Enter an option ('m' to see the menu): # this is to test the program find the shortest 
+# route from CSE to SUZ on campus
+Abbreviated name of starting building: Abbreviated name of ending building: Path from Paul G. Allen Center for Computer Science & Engineering to Suzzallo Library:
+	Walk 18 feet N to (2261, 1707)
+	Walk 90 feet W to (2218, 1696)
+	Walk 134 feet W to (2157, 1675)
+	Walk 200 feet SW to (2067, 1714)
+	Walk 21 feet W to (2055, 1718)
+	Walk 52 feet NW to (2044, 1696)
+	Walk 36 feet N to (2045, 1679)
+	Walk 37 feet N to (2044, 1662)
+	Walk 35 feet N to (2041, 1647)
+	Walk 42 feet NW to (2027, 1632)
+	Walk 43 feet W to (2008, 1625)
+	Walk 33 feet W to (1992, 1623)
+	Walk 35 feet W to (1974, 1625)
+	Walk 40 feet NW to (1965, 1608)
+	Walk 106 feet NW to (1943, 1565)
+	Walk 173 feet NW to (1907, 1490)
+	Walk 90 feet NW to (1888, 1451)
+	Walk 54 feet NW to (1877, 1427)
+	Walk 55 feet NW to (1865, 1404)
+	Walk 35 feet NW to (1855, 1390)
+	Walk 146 feet N to (1871, 1322)
+	Walk 51 feet E to (1896, 1326)
+Total distance: 1525 feet
+
+Enter an option ('m' to see the menu): 
+# terminate the program

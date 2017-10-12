@@ -1,0 +1,119 @@
+CSE 331 Homework 5.  Answers to Written questions.
+Edit this file to supply your answers.
+
+Name:  <Jun Wang>
+
+Problem 1. (Written exercises)
+
+(a)
+IntQueue1:
+RepInvariant:
+    entries!=null &&  For all i such that (0<=i<entries.size(), entries.get(i)!=null)
+
+AF:
+   (this)entries=[] if there are no elements in the entries/queue
+   (this)entries=[n1,n2,…, n_k] where k is the # of the added  element in the entries/queue    
+     The first element entries[0] is the first to be removed and new added element is always added to the back: [n_k+1]      
+
+IntQueue2:
+RepInvariant:
+    entries !=null&&front >=0&&size>=0&& front<entries.length();
+
+AF:
+this = Queue<Integer> such that 
+    entries = [a1, a2, ..., a_k], front = i, size = n
+    queue = [] if size == 0
+    queue = [a_(i+1), ..., a_(i+n)] if front+size <= entries.length()
+    queue = [a_(i+1), ..., a_k, a1, ..., a_(k-i)] if front+size <= entries.length()    
+
+
+(b)
+a=[1,2]
+b=[2,3,4]
+c=[1,2,3]
+d=[1,2]
+e=[1,2,3,4]
+f=[1,2,3]
+g=[1,2]
+h=[2,3,4]
+thus: a,d,g are equivalent to each other
+      b,h are equivalent to each other
+      c,f are equivalent to each other
+
+(c)
+1. It doesn’t expose representation because it takes parameters and returns a primitive data type instead of mutable objects
+2. It contains representation exposure because it returns mutable String[]  if it’s not a copy. 
+3. If return Date is not a copy of the representation and Date is mutable, then it has representation exposure. 
+   Otherwise, it doesn’t.
+4. Because String is immutable, so it doesn’t have representation exposure.
+5. The Iterator interface has remove method and clients can remove elements from outside of abstract 
+   function, thus it has representation exposure.
+6. If Deck is mutable and Deck is not a copy of the original Deck, then it has representation 
+   exposure since clients can modify the Deck.
+
+Problem 2.  (Graph interface/operations)
+
+I just have one DiGraph class and don't have a class for edge because all the node and edge information can be 
+obtained from my DiGraph class, so I think one class is sufficient.
+
+Basically, this graph will be able to add/remove nodes and edges, list all nodes/edges in this graph, list all 
+children/parent nodes of a given node, test if two nodes are connected and show what edges connecting these nodes.
+This implementation support an edge connecting a node to itself and multiple edges between the same nodes with the 
+same edge label.
+
+Descriptions of every methods are listed as follows:
+DiGraph():construct a new graph object
+addNode(String vertex):add a node  to graph
+removeNode(String node):remove a node to graph
+addEdge(String head, String tail, String edge): add an edge from node head to node tail
+removeEdge(String head, String tail, String edge): remove an edge from node head to node tail(if such an edge exist between them)
+removeEdge(String head, String tail): remove all edges from node head to node tail(it will remove all edges if there 
+       are multiple edges between these 2 nodes)
+hasNode(String node): check if this graph has this node
+hasEdge(String edge): check if this graph has this edge
+hasEdge(String head, String tail, String edge): check if this edge connecting node head to node tail
+getEdge(String head,String tail): get all the edges from  node head to node tail
+getEdge(String head): get all edges outgoing from node head
+edgeList(): list all edges in this graph
+adjacentyList(String head): list all children nodes of node head in this graph 
+parentList(String tail): list all parent nodes of node tail in this graph
+outDegree(String node): count how many children nodes of node head in this graph 
+inDegree(String node): count how many parent nodes of this node in this graph
+isConnected(String head,String tail): check if node head is connected to node tail
+NodeList(): list all nodes in this graph
+size(): count how many nodes in this graph
+isEmpty():check if this graph is empty
+numberOfEdges(String head,String tail): count how many edges from node head to node tail
+toString(): a string representation of this graph for better understanding of this graph
+hashCode(): make sure all graphs equal to this will have same hashCode
+equals(Object obj): check if new object equals to this graph
+
+
+Problem 3.  (Testing strategy)
+For testing cases, I tested different graphs, such as empty graph, graph with one node, graph with one node and no edges,
+graphs with 2 or more nodes and edges. Since my ADT support an edge connecting a node to itself and multiple edges between 
+the same nodes with the same edge label, I also tested graphs for these cases. To make sure all cases work properly,
+I tested them from simple graphs with no and less nodes and edges to more complex graphs with more nodes and edges. 
+
+For methods, I tested them one by one and only tested one method each time to ensure it worked properly.
+I used different graphs to test each method to make sure it work well in different cases. I also used
+non-existent nodes or edges(in which case these nodes or edges are not in this graph) to test my methods and class.
+
+Additionally, I created a client class which used DiGraph class to make sure my class and methods are working
+properly under different cases. Please refer to arr1.java for more details if necessary. 
+
+
+Problem 4.  (Representation)
+The advantages of using collection of edges is it has O(1) time complexity when 
+adding a new edge. The advantages of using an adjacency list is it has O(1) time 
+complexity when adding a new vertex or edge. The advantages of using an adjacency 
+matrix is it has O(1) time complexity when adding or removing an edge. 
+
+I used HashMap<String head, ArrayList<HashMap <String tail,String edge>>> to store all nodes and edges between them.
+The map can keep track of all the nodes with theirs associated children node and the edges between them. 
+ArrayList<HashMap <String tail,String edge>> records the adjacency list of all the children node and edges of a node head.
+I found this data structure is very efficient in recording the nodes and edges since it uses adjacency list and it make
+adding new node and edge fast. Additionally, the ArrayList allows duplicates of HashMap <String tail,String edge> to store 
+multiple edges between same nodes with same edge labels. 
+ 
+

@@ -1,0 +1,20 @@
+CSE 331 Homework 9.  Answers to Written questions.
+Edit this file to supply your answers.
+
+Name:  <Jun Wang>
+
+1) List any changes made to the hw8 model implementation for hw9 or 
+"none" if no changes were made.  If there are any changes, include
+a short explanation of each change and why it was needed (see the
+assignment for details of what to include here).
+
+None
+
+
+2) List any additional (optional) extra features included in your
+hw9 GUI or "none" if no additional features.
+
+1.As the window is resized, make the map shrink or grow to fit the window
+2.I added a label to show the estimate time required to go from start
+  to destination building based on average walking speed of 4.5 feet/sec
+  (http://www.usroads.com/journals/p/rej/9710/re971001.htm)

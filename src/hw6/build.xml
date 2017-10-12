@@ -1,0 +1,15 @@
+<!--Minimal ant build file that needs to be created per homework.  You
+ mostly just have to modify the project
+ name, and the also.compile property to be a comma-separated list of
+ other homeworks to compile in the shown fashion. -->
+
+<project name = "hw6" basedir = "../">
+  <property name = "hwname" value = "${ant.project.name}"/>
+  <property name = "hw" location = "${hwname}"/>
+  <property name = "also.compile" value = "utils/**/*.java hw5/**/*.java"/>
+  <property name = "checker.force" value = "false"/>
+  <!-- disable nullness checker -->
+  <property name = "checker.disabled" value="true"/>
+  <property name = "copy.difftests" value = "yes"/>
+  <import file="../common.xml"/>
+</project>

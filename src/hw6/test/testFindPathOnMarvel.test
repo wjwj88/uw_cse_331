@@ -1,0 +1,7 @@
+# test BSF on marvel graph  generic version-Jun Wang 5:00
+
+# build graph
+LoadGraph marvel marvel.tsv
+
+# check BFS
+FindPath marvel M'SHULLA GORILLA-MAN 

@@ -1,0 +1,142 @@
+CSE 331 Homework 4.  Answers to Written questions.
+Edit this file to supply your answers.
+Name:  <Jun Wang>
+
+Problem 0.
+
+(a)
+assume we calculate poly finalSum=p*q
+
+for each term t_p (coefficient c_p,degree d_p) in p:
+   for each term t_q (coefficient c_q,degree d_q) in q:
+       poly temp=0;
+       set temp as a term t_t with coefficient c_p*c_q;
+       set temp as a term t_t with degree d_p*d_q;
+       finalSum=finalSum+temp;//use polynomial addition method
+
+
+(b)
+assume we calculate  p/q
+if maximum degree maximum d_p less than degree d_q:
+   return poly 0;
+else copy of p: poly e=p; 
+     poly result=0;
+     int equalTimes=0;
+     while maximum d_e(associated coefficient c_e) greater or equal to maximum degree d_q(associated coefficient c_q):
+        if d_e=d_q:
+          equalTimes++;// this is to keep track of how many times these 2 degrees are same
+      
+        poly temp=0;
+        newTerm t_n : coefficient: c_e/c_q     degree :d_e-d_q
+        insert t_n into temp as a new term
+        add temp to the result: result=result+temp
+        negate the temp to make it -temp:temp=-temp
+        modify poly e by adding temp times q: e=e+temp*q      
+      
+        if equalTimes==1:// if d_e=d_q, then the loop will do only once,otherwise the loop will never stop
+           break;   // see the following example and the code in RatPoly class for more details
+      return result;
+
+(c)
+
+suppose p=x^3+x-1   q=x+1
+we calculate p/q
+
+d_p=3  d_q=1
+[if maximum degree maximum d_p less than degree d_q:] NO
+  [return poly 0;]
+[else copy of p: poly e=p; ] so poly e=x^3+x-1
+    [poly result=0;] result=0;
+    [int equalTimes=0;] equalTimes=0
+    d_e=3,d_q=1;
+    [while maximum d_e(associated coefficient c_e) greater or equal to maximum degree d_q(associated coefficient c_q):]Yes
+        Iteration 1: [if d_e=d_q:]NO
+                        [equalTimes++;]
+                     
+                     [poly temp=0;]temp=0
+                     [newTerm t_n : coefficient: c_e/c_q  degree :d_e-d_q] new term t_n: coefficient: 1/1=1  degree :3-1=2 
+                     [insert t_n into temp as a new term] temp=x^2
+                     [add temp to the result: result=result+temp;]result=x^2
+                     [negate the temp to make it -temp: temp=-temp]temp=-x^2
+                     [modify poly e by adding temp times q: e=e+temp*q] e=x^3+x-1+(-x^2)*(x+1)=-x^2+x-1
+                     
+                     [if equalTimes==1:] NO
+                        [break]
+
+    d_e=2,d_q=1;
+    [while maximum d_e(associated coefficient c_e) greater or equal to maximum degree d_q(associated coefficient c_q):]Yes    
+         Iteration 2: [if d_e=d_q:]NO
+                        [equalTimes++;]
+                     
+                     [poly temp=0;]temp=0
+                     [newTerm t_n : coefficient: c_e/c_q  degree :d_e-d_q] new term t_n: coefficient: -1/1=-1 degree :2-1=1 
+                     [insert t_n into temp as a new term] temp=-x
+                     [add temp to the result: result=result+temp;]result=x^2-x
+                     [negate the temp to make it -temp: temp=-temp]temp=x
+                     [modify poly e by adding temp times q: e=e+temp*q] e=-x^2+x-1+x*(x+1)=2*x-1
+                     
+                     [if equalTimes==1:] NO
+                        [break]
+                        
+                        
+    d_e=1,d_q=1;
+    [while maximum d_e(associated coefficient c_e) greater or equal to maximum degree d_q(associated coefficient c_q):]Yes    
+         Iteration 3: [if d_e=d_q:]YES
+                        [equalTimes++;]equalTimes=1
+                     
+                     [poly temp=0;]temp=0
+                     [newTerm t_n : coefficient: c_e/c_q  degree :d_e-d_q] new term t_n: coefficient: 2/1=2 degree :1-1=0 
+                     [insert t_n into temp as a new term] temp=2
+                     [add temp to the result: result=result+temp;]result=x^2-x+2
+                     [negate the temp to make it -temp: temp=-temp]temp=-2
+                     [modify poly e by adding temp times q: e=e+temp*q] e=2*x-1+(-2)*(x+1)=-3
+                     
+                     [if equalTimes==1:] YES
+                        [break]          the loop stops here               
+                        
+    we are done! result p/q= x^2-x+2                   
+    
+
+
+Problem 1.
+
+(a)
+The constructor with two parameters doesn't have to use the gcd, since the new rep invariant doesn't require it's in reduced form, and thus can eliminate gcd and its inside loops.
+equals method will add gcd method to ensure some unreduced fraction equal to its reduced form, such as 1/3 and 3/9, making it less efficient due to the loop in gcd.
+toString method will also use the gcd to satisfy the specification, thus adding more loops and reducing efficiency. 
+
+(b)
+For add, sub, mul and div methods, there are no @modifies clause, meaning nothing are changed in these operations. However, the new version methods do change these ration number, thus 
+failing to meet the specifications of these methods. 
+The specifications of this class also declare that it's an immutable rational number. These new methods definitely violates its specifications since it modifies it's parameters.
+
+(c)
+The fields of this class are declared as private and they can only be initialized when creating new objects. All methods in this class don't change the initial object's 
+parameters, but return a new object, the instances of RatNum are prevented. Thus, as long as the original constructor doesn't violate the rep invariant, calling checkRep 
+at the end of the constructors is sufficient.
+
+
+Problem 2.
+
+(a)
+I use checkRep only at the end of constructors since the fields of this class are declared as private. No methods of this class change the fields, but just return new objects, 
+meaning changes to instances of this class are prevented. calling checkRep at the end of the constructors is sufficient to ensure it hold rep invariant.
+
+
+(b)
+constructor would no longer to check zero coefficient, thus can eliminate some code and reduce some complexity.
+toString would need to handle zero coefficient case: it would always print "0", thus leading to some increase in complexity since there will be another condition check.
+equals method would have a special case: if coefficients are both zeros, they are equal regardless of their degrees, thus increasing a little of complexity.
+
+(c)
+constructor would have a special case: when the parameter is NaN, the degree would always set 0. A little increase in complexity.
+Both invariants are fine to me since they eliminate the possibilities that operations such as add,sub,mul,div cannot be done on two terms that have 
+NaN and 0 coefficient with different degree. In this case, both degrees should be set as 0, so operation can be easily done without errors. 
+
+Problem 5.
+
+the four polynomial equations:
+x^3
+x^2+2*x+1
+x+1
+1 

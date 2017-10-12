@@ -1,0 +1,14 @@
+# test parser and BSF two nodes graph  generic version-Jun Wang 5:00
+
+# build graph
+LoadGraph twoNodeGraph twoNode.tsv
+
+# check graph is built correctly
+ListNodes twoNodeGraph 
+ListChildren twoNodeGraph Amanda
+ListChildren twoNodeGraph Jack
+
+# check BFS
+FindPath twoNodeGraph Amanda Amanda
+FindPath twoNodeGraph Amanda Jack
+FindPath twoNodeGraph Jack Amanda 

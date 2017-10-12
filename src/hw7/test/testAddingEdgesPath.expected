@@ -1,0 +1,31 @@
+# Find a path with Dijkstra's algorithm when adding more edges between nodes hw7
+
+created graph g
+added node A to g
+added node B to g
+added node C to g
+added node D to g
+added edge 0.500 from A to B in g
+added edge 0.800 from B to D in g
+added edge 1.000 from D to C in g
+
+path from A to C:
+A to B with weight 0.500
+B to D with weight 0.800
+D to C with weight 1.000
+total cost: 2.300
+
+added edge 0.300 from A to B in g
+
+path from A to C:
+A to B with weight 0.300
+B to D with weight 0.800
+D to C with weight 1.000
+total cost: 2.100
+
+added edge 0.600 from A to D in g
+
+path from A to C:
+A to D with weight 0.600
+D to C with weight 1.000
+total cost: 1.600

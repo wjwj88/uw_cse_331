@@ -1,0 +1,7 @@
+# Test the parser and BFS on empty file  generic version-Jun Wang 5:00
+
+LoadGraph empty emptyGraph.tsv
+
+ListNodes empty
+
+FindPath empty node_A1 node_B1

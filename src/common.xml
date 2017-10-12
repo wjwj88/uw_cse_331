@@ -1,0 +1,615 @@
+<project default="build">
+
+  <!--Set up some properties that will be used throughout the build script-->
+  <property name = "term" value="16sp"/>
+  <property name = "course" value="cse331"/>
+
+  <property environment="env"/>
+
+  <property name = "base" location = '..'/>
+  <property name = "src" location = '.'/>
+  <property name = "dest" location = "${base}/bin"/>
+  <property name = "docdest" location = "${base}/doc"/>
+  <property name = "build.compiler" value = "javac1.8"/>
+  <property name="java.api"
+            value="http://docs.oracle.com/javase/8/docs/api" />
+  <property name="junit.api"
+            value="http://junit.org/javadoc/latest/" />
+  <!-- set up classpaths -->
+  <property name="taglet.path" value="${base}/lib/javadoc331.jar" />
+  <condition property="extra.classpath" value="">
+   <not>
+    <isset property="extra.classpath" />
+   </not>
+  </condition>
+
+  <path id = "common.classpath">
+    <pathelement location = "${dest}"/>
+    <pathelement path="${extra.classpath}" />
+    <fileset    dir="${base}/lib">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+	
+  <property name="jsr308-all.jar" value="${base}/lib/jsr308-all.jar"/>
+  <property name="checker.jar" value="${base}/lib/checker.jar"/>
+	
+	  <condition property="cfJavac" value="javac.bat" else="javac">
+	      <os family="windows" />
+	  </condition>
+
+	  <presetdef name="jsr308.javac">
+	    <javac fork="yes" executable="${checkerframework}/checker/bin/${cfJavac}" >
+	      <!-- JSR-308-related compiler arguments -->
+	      <compilerarg value="-version"/>
+	      <compilerarg value="-implicit:class"/>
+	    </javac>
+	  </presetdef>
+	
+  <!-- load the if, propertyregex tasks -->
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+     classpathref="common.classpath" />
+
+  <!-- load machine-specific properties from ${src}/local.properties. If it doesn't
+       exists, first create such a file with default properties for IWS machines-->
+  <if>
+    <not>
+      <available file="${src}/local.properties"/>
+    </not>
+    <then>
+      <echo message="Generating default configuration in local.properties"/>
+      <touch file="${src}/local.properties"/>
+      <propertyfile file="${src}/local.properties">
+  <entry operation="+" key="javac.location" value="/usr/bin/javac"/>
+      </propertyfile>
+    </then>
+  </if>
+  <property file="${src}/local.properties"/>
+
+	<target name="nullfile">
+	    <available file="${hw}/check-nullness" property="nullfile.present"/>
+	</target>
+	
+  <target name="help">
+    <echo>cse331 ant targets:
+
+      build: build the code for this hw
+
+      doc: generate api documentation for all hws
+
+      doc-hw: generate api documentation for single hw
+
+      test: run both SpecificationTests.java and ImplementationTests.java
+      as JUnit tests.
+
+      gui.test: run SpecificationTests.java and ImplementationTests.java
+      in the graphical JUnit mode.
+
+      gui.test -Duse.test=[classname]: Run a particular test in GUI mode
+
+      daikon: runs all tests through Daikon.  See
+      http://pag.csail.mit.edu/daikon/ for more information about Daikon.
+
+      nocheck: disables the Nullness Checker. This allows you to debug problems
+      independently of running the checker.
+
+      check-nullness: runs the Nullness Checker on all assignments to
+      detect null pointer dereferences.  See
+      http://types.cs.washington.edu/checker-framework/current/checkers-manual.html for more
+      information.
+
+      validate: ensure all required files are in Git Repo, and that the repo ompiles and passes all tests.  Use only on attu
+      for best results.
+
+      run -Dprogram=[classname]: runs the given java program (use the
+      full name, like hw0.HelloWorld)
+
+      clean: deletes all .class files and generated documentation for this hw.
+
+      help: displays this message
+    </echo>
+  </target>
+
+  <!--Call cleancopy.check for all the required files (listed in
+  required.properties) -->
+  <target name="cleancopy" >
+    <echo message="Hw directory: ${hw}"/>
+    <if>
+      <not>
+  <available file="${hw}/required.properties"/>
+      </not>
+      <then>
+        <fail message="You seem to have deleted file: ${hw}/required.properties"/>
+      </then>
+    </if>
+    <property file="${hw}/required.properties"/>
+
+    <foreach list="${required.files}"
+             trim="true"
+             target="cleancopy.check"
+             param="required.file"/>
+  </target>
+
+  <!--Make sure required.file is there.  If not, fail.-->
+  <target name="cleancopy.check">
+    <available file="${required.file}"
+               property="file.present"
+               value="yes"
+               filepath="${hw}"/>
+    <if>
+      <equals arg1="${file.present}" arg2="yes"/>
+      <then>
+        <echo message="Found required file ${required.file}"/>
+      </then>
+      <else>
+        <fail message="Could not find required file: ${required.file}"/>
+      </else>
+    </if>
+  </target>
+
+  <target name = "validate"
+          description = "Does a build and test and makes sure you have the required files">
+    <echo>Validate checks for the
+      presence of required files, and runs all your tests to make sure
+      they pass.  This target can only run on the attu IWS machine.
+
+      Note: the test reports will be generated under the scratch
+      directory the validate target creates.
+    </echo>
+
+    <!-- proported to be the most cross-platform way... since Windows and Linux use different env vars -->
+    <exec executable="hostname" outputproperty="found.hostname"/>
+    <propertyregex property="host.is.attu"
+       input="${found.hostname}"
+       regexp="^attu[0-9]\.cs.washington.edu"
+       select="\0"/>
+
+    <fail unless="host.is.attu"
+    message="Could not validate; the `validate' target must be run on attu.cs.washington.edu"/>
+
+    <property name = "validate.upone" location="${basedir}/.."/>
+
+    <exec executable="ant"
+          dir="${hwname}"
+          failonerror="true" >
+      <arg value="cleancopy"/>
+    </exec>
+    <exec executable="ant"
+          dir="${hwname}"
+          failonerror="true">
+      <!-- necessary since the sub-buildfile does not run from a working copy directory,
+           and works because we already checked that we're on attu (real env.USER). Also,
+           set compiler args so that it fails on the first warning. -->
+      <arg line="-Duser.csenetid=${env.USER} -Dcompiler.args='' test.strict"/>
+    </exec>
+  </target>
+
+  <target name = "exclusive.build" unless = "also.compile">
+    <available file = "${javac.location}"
+                property="build.fork"
+                    value="yes"/>
+    <echo message = "Compiling all files, except a few specified for exclusion."/>
+
+    <property name="compile.source" value="${hw}"/>
+    <property name="compile.include" value=""/>
+    <property name="compile.exclude" value=".svn,*.package.html,${exclude.compile},${staff.nocomp}"/>
+    <antcall target="check-nullness"/>
+    <antcall target="compile.impl"/>
+  </target>
+
+  <target name = "single.build" unless = "also.compile">
+    <available file = "${javac.location}"
+                property="build.fork"
+                    value="yes"/>
+    <echo message = "This hw is independent; building only this one."/>
+
+    <property name="compile.source" value="${hw}"/>
+    <property name="compile.include" value=""/>
+    <property name="compile.exclude" value=".git,*/package.html,${staff.nocomp}"/>
+
+    <antcall target="check-nullness"/>
+    <antcall target="compile.impl"/>
+  </target>
+
+  <target name = "total.build" depends = "decide-eligibility">
+    <available file = "${javac.location}"
+                property="build.fork"
+                    value="yes"/>
+    <echo message = "Building all hws"/>
+
+    <property name="compile.source" value="${src}"/>
+    <property name="compile.include" value=""/>
+    <property name="compile.exclude" value=".git,*/package.html,${staff.nocomp}"/>
+
+    <antcall target="check-nullness"/>
+    <antcall target="compile.impl"/>
+  </target>
+
+  <target name = "multi.build" if = "also.compile">
+    <available file = "${javac.location}"
+                property="build.fork"
+                    value="yes"/>
+    <echo message = "This hw depends on others; building all associated hws now."/>
+    <echo message="${hwname}/**/*.java, ${also.compile}"/>
+
+    <property name="compile.source" value="${src}"/>
+    <property name="compile.include" value="${also.compile}, ${hwname}/**/*.java"/>
+    <property name="compile.exclude" value=".svn,*/package.html,${staff.nocomp}"/>
+
+    <antcall target="check-nullness"/>
+    <antcall target="compile.impl"/>
+  </target>
+
+  <target name = "nocheck" description = "Disables the nullness checker (say, if your setup cannot run it)">
+    <property name="checker.disabled" value="yes"/>
+  </target>
+	
+	  <target name="check-nullness"
+	          description="Check for null pointer dereferences"
+	  	 		depends="nullfile" if="nullfile.present">
+	  	
+	  	<if>
+	  	     <not>
+	  	       <isset property="compile.source"/>
+	  	     </not>
+	  	       <then>
+	  	   <property name="checker.force" value="true" />
+	  	   <antcall target="total.build"/>
+	  	       </then>
+	  	       <else>
+	  	       	
+	  	      <!--default value for compiler.args, if not specified-->
+	  	      <if>
+	  	        <not>
+	  	          <isset property="compiler.args"/>
+	  	        </not>
+	  	        <then>
+	  	          <property name="compiler.args" value="-Awarns -Xmaxwarns 10000"/>
+	  	        </then>
+	  	      </if>
+	  	
+	    <!-- use jsr308.javac instead of javac -->
+	    <jsr308.javac srcdir="${compile.source}"
+	           destdir="${dest}"
+	           debug="true"
+	     fork="${build.fork}"
+	     executable="${javac.location}"
+	     includes="${compile.include}"
+	           excludes="${compile.exclude}"
+	     includeantruntime="false">
+	    <compilerarg value="-Xbootclasspath/p:${base}/lib/jdk8.jar"/>
+	      <compilerarg line="-processor org.checkerframework.checker.nullness.NullnessChecker"/>
+	      <!-- optional, to not check uses of library methods:
+	        <compilerarg value="-AskipUses=^(java\.awt\.|javax\.swing\.)"/>
+	      -->
+		      <!--<compilerarg line="${compiler.args}"/>-->
+		      <compilerarg value="-Xlint"/>
+		      <classpath refid = "common.classpath"/>
+	    </jsr308.javac>
+	  	       </else>
+	  	   </if>
+	  </target>
+
+  <target name="compile.impl"
+    description="Performs the actual compilation of java source files into class files.">
+    <!-- copy any diff tests (run by ScriptFileTests, named *.expected and *.test)
+         to the equivalent directory in the compile dest directory. Only if
+         property is set. -->
+    <if>
+      <isset property="copy.difftests"/>
+      <then>
+        <copy todir="${dest}/">
+          <fileset dir="${src}/">
+            <include name="**/*.expected"/>
+            <include name="**/*.test"/>
+          </fileset>
+        </copy>
+      </then>
+    </if>
+    <!-- copy any images to the bin directory, in case they are needed (mainly by 11wi PS7) -->
+    <copy todir="${dest}/">
+      <fileset dir="${src}/">
+  <include name="**/*.gif"/>
+  <include name="**/*.jpg"/>
+  <include name="**/*.png"/>
+      </fileset>
+    </copy>
+
+    <!--default value for compiler.args, if not specified-->
+    <if>
+      <not>
+  <isset property="compiler.args"/>
+      </not>
+      <then>
+  <property name="compiler.args" value="-Awarns -Xmaxwarns 10000"/>
+      </then>
+    </if>
+
+    <!-- it is controlled by the properties compile.{source,include,exclude}. More complicated
+         invocations of javac need to define their own javac call -->
+    <mkdir dir="${dest}"/>
+    <javac srcdir="${compile.source}"
+           destdir="${dest}"
+           debug="true"
+     fork="${build.fork}"
+     executable="${javac.location}"
+     includes="${compile.include}"
+           excludes="${compile.exclude}"
+     includeantruntime="false">
+      <compilerarg line="${compiler.args}"/>
+      <compilerarg value="-Xlint"/>
+        <compilerarg value="-Xbootclasspath/p:${base}/lib/jdk8.jar"/>
+      <classpath refid = "common.classpath"/>
+    </javac>
+  </target>
+
+  <target name = "decide-eligibility" unless = "checker.force"
+    description="Decides whether or not student's code should be compiled with nullness checker">
+    <!-- check whether to automatically run the nullness checker (target check-nullness). -->
+    <if>
+      <and>
+  <not><isset property="checker.force"/></not>
+  <not><isset property="checker.disabled"/></not>
+      </and>
+      <then>
+  <tempfile property="temp.file" deleteonexit="true"/>
+  <exec executable="svn"
+        dir="${base}"
+        outputproperty="svninfo.out">
+    <arg line="info"/>
+  </exec>
+  <propertyregex property="user.csenetid"
+           input="${svninfo.out}"
+           regexp="Repository Root: .*/projects/instr/${term}/${course}/(\w+)/REPOS"
+           select="\1"/>
+  <if>
+    <not><isset property="user.csenetid"/></not>
+    <then>
+      <echo message="DEBUG: Repository Root: .*/projects/instr/${term}/${course}/(\w+)/REPOS"/>
+      <echo message="DEBUG: svn output"/>
+      <echo message="${svninfo.out}"/>
+      <fail message="Unable to build, because your CSENetId was unable to be determined. Please email course staff, and include the lines starting with DEBUG: above."/>
+    </then>
+  </if>
+  <echo file="${temp.file}" message="${term} ${course} ${user.csenetid}"/>
+  <checksum property="user.hash" file="${temp.file}"/>
+  <propertyregex property="checker.disabled"
+           input="${user.hash}"
+           regexp="^[0-7].*"
+           select="\0"/>
+      </then>
+    </if>
+    <if>
+      <isset property="checker.disabled"/>
+      <then>
+  <echo message="Automatic running of the nullness checker has been disabled."/>
+      </then>
+    </if>
+
+  </target>
+
+  <target name = "build"
+    description="Compiles the assignment"
+    depends = "decide-eligibility">
+    <!-- used by compile.impl and check-nullness -->
+    <available file = "${javac.location}"
+                property="build.fork"
+                    value="yes"/>
+    <antcall target = "single.build"/>
+    <antcall target = "multi.build"/>
+  </target>
+
+  <target name = "clean" description="Deletes most of the generated files">
+    <delete>
+      <fileset dir = "${hw}"
+               casesensitive = "yes"
+               includes="**/daikon*.dtrace.gz **/daikon*.inv.*">
+      </fileset>
+    </delete>
+    <mkdir dir="${dest}"/>
+    <delete>
+      <fileset dir="${dest}"
+           casesensitive="yes"
+           includes="**/*">
+      </fileset>
+    </delete>
+
+  </target>
+
+  <!-- 15wi removed depends="build" from doc targets to allow javadoc
+       generation for partially implemented projects -->
+
+ <target name = "doc-hw"
+          description = "Build the Javadoc API documentation for this hw">
+    <delete dir = "${docdest}"/>
+    <mkdir dir = "${docdest}"/>
+    <javadoc sourcepath="${hw}" destdir="${docdest}" linksource="yes">
+      <classpath refid = "common.classpath"/>
+      <link href="${java.api}" />
+      <link href="${junit.api}" />
+      <fileset dir="${hw}"
+       includes="*.java, ${also.compile}, ${staff.doc}"
+       excludes="${staff.nodoc}" />
+      <taglet name="javadoc331.RequiresTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.EffectsTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.ModifiesTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.ReturnsTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.SpecfieldTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.DerivedfieldTaglet" path="${taglet.path}" />
+    </javadoc>
+  </target>
+
+  <target name = "doc"
+          description = "Build the Javadoc API documentation for all hws">
+    <delete dir = "${docdest}"/>
+    <mkdir dir = "${docdest}"/>
+    <javadoc sourcepath="${src}" destdir="${docdest}" linksource="yes">
+      <classpath refid = "common.classpath"/>
+      <link href="${java.api}" />
+      <link href="${junit.api}" />
+      <fileset dir="${basedir}"
+       includes="${hwname}/**/*.java, ${also.compile}, ${staff.doc}"
+       excludes="${staff.nodoc}" />
+      <taglet name="javadoc331.RequiresTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.EffectsTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.ModifiesTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.ReturnsTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.SpecfieldTaglet" path="${taglet.path}" />
+      <taglet name="javadoc331.DerivedfieldTaglet" path="${taglet.path}" />
+    </javadoc>
+  </target>
+
+  <target name = "test.spec" depends = "build" unless = "no.tests">
+    <mkdir dir = "${hw}/test/reports"/>
+
+    <!-- Set the run directory to the project base. This way
+      relative filenames are treated the same when the program
+      is run through Ant or Eclipse. -->
+    <junit printsummary="yes"
+           dir="${base}"
+           fork="on"
+           failureproperty="test.spec.failed"
+           forkmode="once">
+      <classpath refid = "common.classpath"/>
+      <test name="${hwname}.test.SpecificationTests"
+            todir="${hw}/test/reports">
+        <formatter type="plain"/>
+      </test>
+      <assertions>
+        <enable/>
+      </assertions>
+    </junit>
+  </target>
+
+  <target name = "test.impl" depends = "build" unless = "no.tests">
+    <mkdir dir = "${hw}/test/reports"/>
+
+    <!-- Set the run directory to the project base. This way
+      relative filenames are treated the same when the program
+      is run through Ant or Eclipse. -->
+    <junit printsummary="yes"
+           dir="${base}"
+           fork="on"
+           failureproperty="test.impl.failed"
+           forkmode="once">
+      <classpath refid = "common.classpath"/>
+      <test name="${hwname}.test.ImplementationTests"
+            todir="${hw}/test/reports">
+        <formatter type="plain"/>
+      </test>
+      <assertions>
+        <enable/>
+      </assertions>
+    </junit>
+  </target>
+
+  <target name = "test" depends = "test.impl, test.spec"
+          description="Run all standard tests on the code" unless = "no.tests">
+    <echo message="Records of this testing can be found in ${basedir}/${hwname}/test/reports/"/>
+  </target>
+
+  <target name = "test.strict" depends = "test">
+    <fail if="test.impl.failed"/>
+    <fail if="test.spec.failed"/>
+  </target>
+
+  <target name = "gui.test.all" depends = "build" unless="use.test">
+    <java classname="junit.swingui.TestRunner"
+          fork="Yes"
+          spawn="Yes"
+          dir="${hw}/test/"
+          classpathref="common.classpath">
+      <arg value="${hwname}.test.ImplementationTests"/>
+      <arg value="${hwname}.test.SpecificationTests"/>
+      <assertions>
+        <enable/>
+      </assertions>
+    </java>
+  </target>
+
+  <target name = "gui.test.one" depends = "build" if="use.test">
+    <java classname="junit.swingui.TestRunner"
+          fork="Yes"
+          spawn="Yes"
+          dir="${hw}/test/"
+          classpathref="common.classpath">
+      <arg value="${use.test}"/>
+      <assertions>
+        <enable/>
+      </assertions>
+    </java>
+  </target>
+
+  <target name="gui.test"
+          description="Run tests using the JUnit GUI.  Optional parameter&#10;
+                        use.test selects a particulart test; default runs all">
+    <antcall target="gui.test.all"/>
+    <antcall target="gui.test.one"/>
+  </target>
+
+  <!-- For regrading purposes, runs staff tests after the autograding phase. -->
+  <target name = "staff.test.unpacked" depends = "build">
+    <mkdir dir = "${hw}/staff/test/reports-unpacked"/>
+    <junit printsummary="yes"
+          dir="${base}"
+          fork="on"
+          forkmode="once">
+     <classpath refid = "common.classpath"/>
+     <test name="${hwname}.staff.test.StaffTests"
+           todir="${hw}/staff/test/reports-unpacked">
+       <formatter type="plain"/>
+     </test>
+     <assertions>
+       <enable/>
+     </assertions>
+    </junit>
+  </target>
+
+  <!-- runs daikon on the student program.  Results are prefixed with
+       ${hwname}.  The most interesting file is ${hwname}.inv.txt.
+       Note these are in the assignment directory rather than tests -->
+  <target name = "daikon" depends = "build"
+          description="Runs daikon on the program.  Results are prefixed with the hw name">
+    <java classname="daikon.Chicory"
+          fork="yes"
+          spawn="no"
+          dir="${hw}"
+          classpathref="common.classpath">
+      <arg value="--ppt-omit-pattern=junit|^${hwname}.test"/>
+      <arg value="--dtrace-file=daikon.dtrace.gz"/>
+      <arg value="--daikon"/>
+      <arg value="--daikon_args"/>
+      <arg value="--config_option daikon.PptRelation.enable_object_user=false
+            --no_text_output --config_option daikon.Daikon.progress_delay=-1"/>
+      <arg value="org.junit.runner.JUnitCore"/>
+      <arg value="${hwname}.test.SpecificationTests"/>
+    </java>
+    <java classname="daikon.PrintInvariants"
+          fork="yes"
+          spawn="no"
+          classpathref="common.classpath"
+          dir="${hw}"
+          output="${hw}/daikon.inv.txt">
+       <arg value="daikon.inv.gz"/>
+    </java>
+    <echo> "Results are in daikon.inv.txt" </echo>
+  </target>
+
+
+  <target name = "run" depends = "build" if="program"
+          description="Runs the given program argument">
+    <java classname="${program}"
+          fork="Yes"
+          spawn="Yes"
+          dir="${hw}"
+          classpathref="common.classpath"/>
+      <assertions>
+        <enable/>
+      </assertions>
+  </target>
+
+
+  <target name = "all" depends = "build, test, doc"/>
+
+
+</project>
